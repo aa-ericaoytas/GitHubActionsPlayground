@@ -26,26 +26,14 @@ jobs:
           sleep 15
           yq eval '.spec.containerTag = "${{ github.event.inputs.newVersion }}"' --inplace ${{ env.fileToUpdate }}
 
-      - name: Cat file
+      - name: Show file content
         run: |
           cat ${{ env.fileToUpdate }}
 
-      # - name: switching from HTTPS to SSH
-      #   run: git remote set-url origin ${{ secrets.ssh }}
-      
-      - name: set up git config
+      - name: Update version in file
         run: |
           git config user.name "eo"
           git config user.email "<>"
-
-      - name: check for changes
-        run: git status
-
-      - name: stage changed files
-        run: git add .
-
-      - name: commit changed files
-        run: git commit -m "Update version in file"
-
-      - name: push code to master
-        run: git push origin main
+          git add .
+          git commit -m "Update version to ${{ github.event.inputs.newVersion }} in ${{ env.fileToUpdate }}"
+          git push origin main
