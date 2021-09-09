@@ -12,6 +12,7 @@ env:
 
 jobs:
   Update-file:
+    name: Updating version to ${{ github.event.inputs.newVersion }} in ${{ env.fileToUpdate }}
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout Code from the repository
@@ -30,7 +31,7 @@ jobs:
         run: |
           cat ${{ env.fileToUpdate }}
 
-      - name: Update version in file
+      - name: Update version to ${{ github.event.inputs.newVersion }}in file
         run: |
           git config user.name "eo"
           git config user.email "<>"
