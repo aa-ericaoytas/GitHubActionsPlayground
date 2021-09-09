@@ -21,7 +21,7 @@ jobs:
       - name: Check out yq - portable yaml processor
         uses: mikefarah/yq@v4.11.2
 
-      - name: Use yq to update secrets.yaml
+      - name: Use yq to update file
         run: | 
           sleep 15
           yq eval '.spec.containerTag = "${{ github.event.inputs.newVersion }}"' --inplace ${{ env.fileToUpdate }}
@@ -29,3 +29,10 @@ jobs:
       - name: Cat file
         run: |
           cat ${{ env.fileToUpdate }}
+
+      - name: Commit changes
+        run: |
+          git status
+          git add .
+          git commit -m "Update version"
+          git push
