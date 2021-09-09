@@ -46,6 +46,6 @@ jobs:
 
       - name: commit changed files
         run: git commit -m "Update version in file"
-        
+
       - name: push code to master
-        run: git push origin master
+        run: git push origin main
