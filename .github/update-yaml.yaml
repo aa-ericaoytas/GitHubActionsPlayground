@@ -1,0 +1,31 @@
+name: Update yaml in file
+
+on:
+  workflow_dispatch:
+    inputs:
+      newVersion:
+        description: Version to update to
+        required: true 
+
+env: 
+  fileToUpdate: test.yaml
+
+jobs:
+  Update-file:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Code from the repository
+        id: checkoutCode
+        uses: actions/checkout@v2
+
+      - name: Check out yq - portable yaml processor
+        uses: mikefarah/yq@v4.11.2
+
+      - name: Use yq to update secrets.yaml
+        run: | 
+          sleep 15
+          yq eval '.spec.containerTag = "${{ github.event.inputs.newVersion }}"' --inplace ${{ env.fileToUpdate }}
+
+      - name: Cat file
+        run: |
+          cat ${{ env.fileToUpdate }}
