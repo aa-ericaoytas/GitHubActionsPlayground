@@ -35,7 +35,7 @@ jobs:
           echo "::set-output name=webapp::${APPNAME}/${{ github.event.client_payload.targetEnvironment }}"
 
   update-file:
-    name: Updating version to ${{ github.event.client_payload.newVersion }}
+    name: Updating version to ${{ github.event.client_payload.applicationVersion }}
     runs-on: ubuntu-latest
     needs: set-up
     steps: 
@@ -48,16 +48,16 @@ jobs:
       - name: Update containerTag in ${{ needs.set-up.outputs.webappPath }}/${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: | 
-          yq eval '.spec.containerTag = "${{ github.event.client_payload.newVersion }}"' --inplace ${{ env.fileToUpdate }}
+          yq eval '.spec.containerTag = "${{ github.event.client_payload.applicationVersion }}"' --inplace ${{ env.fileToUpdate }}
 
       - name: Show file content
         run: |
           cat ${{ env.fileToUpdate }}
 
-      - name: Update version to ${{ github.event.inputs.newVersion }} in file
+      - name: Update version to ${{ github.event.inputs.applicationVersion }} in file
         run: |
           git config user.name "${{ github.event.client_payload.actor }}"
           git config user.email "<>"
           git add .
-          git commit -m "Update version to ${{ github.event.client_payload.newVersion }} in ${{ env.fileToUpdate }}"
+          git commit -m "Update version to ${{ github.event.client_payload.applicationVersion }} in ${{ env.fileToUpdate }}"
           git push origin main
