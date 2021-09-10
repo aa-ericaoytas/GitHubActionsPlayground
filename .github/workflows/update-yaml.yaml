@@ -50,7 +50,7 @@ jobs:
         run: | 
           yq eval '.spec.containerTag = "${{ github.event.client_payload.applicationVersion }}"' --inplace ${{ env.fileToUpdate }}
 
-      - name: Update version to ${{ github.event.inputs.applicationVersion }} in file
+      - name: Update version to ${{ github.event.client_payload.applicationVersion }} in file
         run: |
           git config user.name "${{ github.event.client_payload.actor }}"
           git config user.email "<>"
