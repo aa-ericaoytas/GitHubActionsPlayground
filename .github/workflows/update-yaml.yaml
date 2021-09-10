@@ -1,18 +1,14 @@
 name: Update yaml in file
 
 on:
-  workflow_dispatch:
-    inputs:
-      newVersion:
-        description: Version to update to
-        required: true 
+  repository_dispatch:
 
 env: 
   fileToUpdate: test.yaml
 
 jobs:
   Update-file:
-    name: Updating version to ${{ github.event.inputs.newVersion }}
+    name: Updating version to ${{ github.event.client_payload.newVersion }}
     runs-on: ubuntu-latest
     steps: 
       - name: Checkout Code from the repository
@@ -25,7 +21,7 @@ jobs:
       - name: Use yq to update file
         run: | 
           sleep 15
-          yq eval '.spec.containerTag = "${{ github.event.inputs.newVersion }}"' --inplace ${{ env.fileToUpdate }}
+          yq eval '.spec.containerTag = "${{ github.event.client_payload.newVersion }}"' --inplace ${{ env.fileToUpdate }}
 
       - name: Show file content
         run: |
@@ -36,5 +32,5 @@ jobs:
           git config user.name "eo"
           git config user.email "<>"
           git add .
-          git commit -m "Update version to ${{ github.event.inputs.newVersion }} in ${{ env.fileToUpdate }}"
+          git commit -m "Update version to ${{ github.event.client_payload.newVersion }} in ${{ env.fileToUpdate }}"
           git push origin main
