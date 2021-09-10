@@ -60,4 +60,4 @@ jobs:
 
       - name: Show updated ${{ env.fileToUpdate }}
         run: |
-          cat ${{ env.fileToUpdate }}
+          cat ${{ needs.set-up.outputs.webappPath }}/${{ env.fileToUpdate }}
