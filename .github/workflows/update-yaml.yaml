@@ -2,6 +2,9 @@ name: Update yaml in file
 
 on:
   repository_dispatch:
+  # INPUTS
+  # newVersion: new version to update to
+  # actor: name of person who initiated commit original workflow
 
 env: 
   fileToUpdate: test.yaml
@@ -29,7 +32,7 @@ jobs:
 
       - name: Update version to ${{ github.event.inputs.newVersion }} in file
         run: |
-          git config user.name "eo"
+          git config user.name "${{ github.event.client_payload.actor }}"
           git config user.email "<>"
           git add .
           git commit -m "Update version to ${{ github.event.client_payload.newVersion }} in ${{ env.fileToUpdate }}"
