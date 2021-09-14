@@ -1,4 +1,4 @@
-name: Update yaml in file
+name: Update yaml - 1
 
 on:
   repository_dispatch:
