@@ -2,11 +2,28 @@ name: Update yaml - 1
 
 on:
   repository_dispatch:
-  # INPUTS
-  # actor: name of person who initiated merge/release original workflow
-  # applicationName: name of application
-  # applicationVersion: new version to update to
-  # targetEnvironment: nonprod or prod
+    # client_payload
+      # actor: name of person who initiated merge/release original workflow
+      # applicationName: name of application
+      # applicationVersion: new version to update to
+      # targetEnvironment: nonprod or prod
+  workflow_dispatch:
+    actor:
+      description: "Name of person who initiated run"
+      required: true
+      default: aa-ericaoytas
+    applicationName:
+      description: "Name of app being deployed"
+      required: true
+      default: test-app
+    applicationVersion:
+      description: "New version to update to"
+      required: true
+    targetEnvironment: 
+      description: Nonprod or prod
+      required: true
+      default: nonprod
+
 
 env: 
   fileToUpdate: test.yaml
@@ -17,6 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       webappPath: ${{ steps.getPath.outputs.webapp }}
+      actor: ${{ steps.getWorkflowInputs.outputs.actor }}
+      applicationName: ${{ steps.getWorkflowInputs.outputs.applicationName }}
+      applicationVersion: ${{ steps.getWorkflowInputs.outputs.applicationVersion }}
+      targetEnvironment: ${{ steps.getWorkflowInputs.outputs.targetEnvironment }}
     steps:
       - name: Checkout Code from the repository
         uses: actions/checkout@v2
@@ -28,14 +49,29 @@ jobs:
           echo "INFO: applicationVersion=${{ github.event.client_payload.applicationVersion }}"
           echo "INFO: targetEnvironment=${{ github.event.client_payload.targetEnvironment }}"
 
+      - name: Output workflow inputs to variables
+        id: getWorkflowInputs
+        run: |
+          if [[ ${{ github.event_name }} == "repository_dispatch" ]]; then 
+            echo "::set-output name=actor::${{ github.event.client_payload.actor }}"      
+            echo "::set-output name=applicationName::${{ github.event.client_payload.applicationName }}" 
+            echo "::set-output name=applicationVersion::${{ github.event.client_payload.applicationVersion }}" 
+            echo "::set-output name=targetEnvironment::${{ github.event.client_payload.targetEnvironment }}" 
+          else
+            echo "::set-output name=actor::${{ github.event.inputs.actor }}"      
+            echo "::set-output name=applicationName::${{ github.event.inputs.applicationName }}" 
+            echo "::set-output name=applicationVersion::${{ github.event.inputs.applicationVersion }}" 
+            echo "::set-output name=targetEnvironment::${{ github.event.inputs.targetEnvironment }}" 
+          fi
+
       - name: Set up path to ${{ env.fileToUpdate }}
         id: getPath
         run: |
-          APPNAME=$(echo "${{ github.event.client_payload.applicationName }}" | tr _ -)
-          echo "::set-output name=webapp::${APPNAME}/${{ github.event.client_payload.targetEnvironment }}"
+          APPNAME=$(echo "${{ steps.getWorkflowInputs.outputs.applicationName }}" | tr _ -)
+          echo "::set-output name=webapp::${APPNAME}/${{ steps.getWorkflowInputs.outputs.targetEnvironment }}"
 
   update-file:
-    name: Updating version to ${{ github.event.client_payload.applicationVersion }}
+    name: Updating version to ${{ needs.set-up.outputs.applicationVersion }}
     runs-on: ubuntu-latest
     needs: set-up
     steps: 
@@ -45,17 +81,17 @@ jobs:
       - name: Check out yq - portable yaml processor
         uses: mikefarah/yq@v4.11.2
 
-      - name: Update containerTag to ${{ github.event.client_payload.applicationVersion }} in ${{ needs.set-up.outputs.webappPath }}/${{ env.fileToUpdate }}
+      - name: Update containerTag to ${{ needs.set-up.outputs.applicationVersion }} in ${{ needs.set-up.outputs.webappPath }}/${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: | 
-          yq eval '.spec.containerTag = "${{ github.event.client_payload.applicationVersion }}"' --inplace ${{ env.fileToUpdate }}
+          yq eval '.spec.containerTag = "${{ needs.set-up.outputs.applicationVersion }}"' --inplace ${{ env.fileToUpdate }}
 
       - name: Commit and merges changes
         run: |
-          git config user.name "${{ github.event.client_payload.actor }}"
+          git config user.name "${{ needs.set-up.outputs.actor }}"
           git config user.email "<>"
           git add .
-          git commit -m "Update version to ${{ github.event.client_payload.applicationVersion }} in ${{ env.fileToUpdate }}"
+          git commit -m "Update version to ${{ needs.set-up.outputs.applicationVersion }} in ${{ env.fileToUpdate }}"
           git push origin main
 
       - name: Show updated ${{ env.fileToUpdate }}
