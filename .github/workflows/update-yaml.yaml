@@ -43,13 +43,6 @@ jobs:
       - name: Checkout Code from the repository
         uses: actions/checkout@v2
 
-      - name: Echo inputs
-        run: |
-          echo "INFO: actor=${{ github.event.client_payload.actor }}"
-          echo "INFO: applicationName=${{ github.event.client_payload.applicationName }}"
-          echo "INFO: applicationVersion=${{ github.event.client_payload.applicationVersion }}"
-          echo "INFO: targetEnvironment=${{ github.event.client_payload.targetEnvironment }}"
-
       - name: Output workflow inputs to variables
         id: getWorkflowInputs
         run: |
