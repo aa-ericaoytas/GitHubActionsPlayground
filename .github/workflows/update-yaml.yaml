@@ -8,21 +8,22 @@ on:
       # applicationVersion: new version to update to
       # targetEnvironment: nonprod or prod
   workflow_dispatch:
-    actor:
-      description: "Name of person who initiated run"
-      required: true
-      default: aa-ericaoytas
-    applicationName:
-      description: "Name of app being deployed"
-      required: true
-      default: test-app
-    applicationVersion:
-      description: "New version to update to"
-      required: true
-    targetEnvironment: 
-      description: Nonprod or prod
-      required: true
-      default: nonprod
+    inputs:
+      actor:
+        description: "Name of person who initiated run"
+        required: true
+        default: aa-ericaoytas
+      applicationName:
+        description: "Name of app being deployed"
+        required: true
+        default: test-app
+      applicationVersion:
+        description: "New version to update to"
+        required: true
+      targetEnvironment: 
+        description: Nonprod or prod
+        required: true
+        default: nonprod
 
 
 env: 
