@@ -46,8 +46,8 @@ jobs:
           APPNAME=$(echo "${{ steps.getWorkflowInputs.outputs.applicationName }}" | tr _ -)
           echo "::set-output name=webapp::${APPNAME}/${{ steps.getWorkflowInputs.outputs.targetEnvironment }}"
 
-  update-file:
-    name: Updating version to ${{ needs.set-up.outputs.applicationVersion }}
+  yq-commands:
+    name: Practice YQ commands
     runs-on: ubuntu-latest
     needs: set-up
     steps: 
@@ -60,4 +60,4 @@ jobs:
       - name: Read ${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: | 
-          yq eval '.spec.containerName' ${{ env.fileToUpdate }}
+          echo $(yq e '.spec.containerName' ${{ env.fileToUpdate }})
