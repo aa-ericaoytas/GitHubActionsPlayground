@@ -1,0 +1,68 @@
+name: Update yaml
+
+on:
+  workflow_dispatch:
+    inputs:
+      applicationName:
+        description: "Name of app being deployed"
+        required: true
+        default: test-app
+      targetEnvironment: 
+        description: Nonprod or prod
+        required: true
+        default: nonprod
+
+env: 
+  fileToUpdate: test.yaml
+
+jobs:
+  set-up:
+    name: Set up variables
+    runs-on: ubuntu-latest
+    outputs:
+      webappPath: ${{ steps.getPath.outputs.webapp }}
+      actor: ${{ steps.getWorkflowInputs.outputs.actor }}
+      applicationName: ${{ steps.getWorkflowInputs.outputs.applicationName }}
+      applicationVersion: ${{ steps.getWorkflowInputs.outputs.applicationVersion }}
+      targetEnvironment: ${{ steps.getWorkflowInputs.outputs.targetEnvironment }}
+    steps:
+      - name: Checkout Code from the repository
+        uses: actions/checkout@v2
+
+      - name: Fail job 
+        if: ${{ github.event.client_payload.autoFail }} == true
+        run: | 
+          exit 1
+
+      - name: Output workflow inputs to variables
+        id: getWorkflowInputs
+        run: |
+          if [[ ${{ github.event_name }} == "repository_dispatch" ]]; then  
+            echo "::set-output name=applicationName::${{ github.event.client_payload.applicationName }}" 
+            echo "::set-output name=targetEnvironment::${{ github.event.client_payload.targetEnvironment }}" 
+          else 
+            echo "::set-output name=applicationName::${{ github.event.inputs.applicationName }}" 
+            echo "::set-output name=targetEnvironment::${{ github.event.inputs.targetEnvironment }}" 
+          fi
+
+      - name: Set up path to ${{ env.fileToUpdate }}
+        id: getPath
+        run: |
+          APPNAME=$(echo "${{ steps.getWorkflowInputs.outputs.applicationName }}" | tr _ -)
+          echo "::set-output name=webapp::${APPNAME}/${{ steps.getWorkflowInputs.outputs.targetEnvironment }}"
+
+  update-file:
+    name: Updating version to ${{ needs.set-up.outputs.applicationVersion }}
+    runs-on: ubuntu-latest
+    needs: set-up
+    steps: 
+      - name: Checkout Code from the repository
+        uses: actions/checkout@v2
+
+      - name: Check out yq - portable yaml processor
+        uses: mikefarah/yq@v4.11.2
+
+      - name: Read ${{ env.fileToUpdate }}
+        working-directory: ${{ needs.set-up.outputs.webappPath }}
+        run: | 
+          yq eval '.spec.containerName' ${{ env.fileToUpdate }}
