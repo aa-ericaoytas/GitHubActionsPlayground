@@ -58,6 +58,12 @@ jobs:
         uses: mikefarah/yq@v4.11.2
 
       - name: Read ${{ env.fileToUpdate }}
+        id: readFile
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: | 
-          echo $(yq e '.spec.containerName' ${{ env.fileToUpdate }})
+          CONTAINER_NAME=$(yq e '.spec.containerName' ${{ env.fileToUpdate }})
+          echo "::set-output name=containerName::$(CONTAINER_NAME)"
+
+      - name: Print value
+        run: |
+          echo ${{ steps.readFile.outputs.containerName }}
