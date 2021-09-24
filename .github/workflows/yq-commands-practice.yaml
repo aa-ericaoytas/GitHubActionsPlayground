@@ -29,11 +29,6 @@ jobs:
       - name: Checkout Code from the repository
         uses: actions/checkout@v2
 
-      - name: Fail job 
-        if: ${{ github.event.client_payload.autoFail }} == true
-        run: | 
-          exit 1
-
       - name: Output workflow inputs to variables
         id: getWorkflowInputs
         run: |
