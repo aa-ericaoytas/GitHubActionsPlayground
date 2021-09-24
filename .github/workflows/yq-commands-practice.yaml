@@ -1,4 +1,4 @@
-name: Update yaml
+name: YQ commands
 
 on:
   workflow_dispatch:
