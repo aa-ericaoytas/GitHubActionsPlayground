@@ -62,7 +62,7 @@ jobs:
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: | 
           CONTAINER_NAME=$(yq e '.spec.containerName' ${{ env.fileToUpdate }})
-          echo "::set-output name=containerName::$(CONTAINER_NAME)"
+          echo "::set-output name=containerName::${CONTAINER_NAME}"
 
       - name: Print value
         run: |
