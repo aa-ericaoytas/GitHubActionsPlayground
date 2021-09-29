@@ -1,0 +1,55 @@
+name: sed commands
+
+on:
+  workflow_dispatch:
+    inputs:
+      applicationName:
+        description: "Name of app being deployed"
+        required: true
+        default: test-app
+      targetEnvironment:
+        description: "[ nonprod, prod ]"
+        required: true
+        default: nonprod
+      branchName: 
+        description: "Name of branch"
+        required: true
+        default: test-branch
+
+env: 
+  fileToUpdate: test.yaml
+
+jobs:
+  set-up:
+    name: Get path to webapp.yaml
+    runs-on: ubuntu-latest
+    outputs:
+      webappPath: ${{ steps.getPath.outputs.webapp }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up path to webapp.yaml
+        id: getPath
+        run: |
+          APPNAME=${{ github.event.inputs.applicationName }}
+          if [[ ${APPNAME} == *"_parent"* ]]; then
+            APPNAME=${APPNAME%"_parent"}
+          fi
+          WEBAPP_PATH=$(echo "${APPNAME}" | tr _ -)/${{ github.event.inputs.targetEnvironment }}
+          echo "::set-output name=webapp::${WEBAPP_PATH}"
+          echo "INFO: webappPath=${WEBAPP_PATH}
+
+  update-webapp:
+    name: Set up variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      # 3) Update webapp.yaml
+      - name: Update webapp.yaml using sed
+        working-directory: ${{ needs.set-up.outputs.webappPath }}
+        run: |
+          sed 's/^\(\s*metadata.name\s*:\s*\).*/\${{ github.event.inputs.applicationName }}-${{ github.event.inputs.branchName }}/' webapp.yaml
+          sed 's/^\(\s*containerTag\s*:\s*\).*/\${{ github.event.inputs.branchName }}/' webapp.yaml
