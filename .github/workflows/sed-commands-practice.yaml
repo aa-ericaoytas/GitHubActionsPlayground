@@ -51,10 +51,11 @@ jobs:
       - name: Update ${{ env.fileToUpdate }} using sed
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          sed 's/^\(\s*metadata\s*:/,/^ *[^:]*:/s/name:/\s*\).*/\1${{ github.event.inputs.applicationName }}-${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
+          sed '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ] \
+                /'"name"'/s/\('"name: "'\)\(.*$\)/\1'"hello"'/ \
+                }' ${{ env.fileToUpdate }}
           sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
-          
-
+      
       - name: Print changes to ${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
