@@ -52,7 +52,7 @@ jobs:
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
           sed '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ] \
-                /'"name"'/s/\('"name: "'\)\(.*$\)/\1'"hello"'/ \
+                /'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ github.event.inputs.applicationName }}"'/ \
                 }' ${{ env.fileToUpdate }}
           sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
       
