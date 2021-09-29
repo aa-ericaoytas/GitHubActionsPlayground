@@ -64,7 +64,7 @@ jobs:
           CONTAINER_TAG: ${{ github.event.inputs.branchName }}
           FILE_NAME: ${{ env.fileToUpdate }}
       
-      - name: Print changes to ${{ env.fileToUpdate }}
+      - name: Print changes
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          cat ${{ steps.updateFile.outputs.tempFileName }}
+          cat ${{ env.fileToUpdate }}
