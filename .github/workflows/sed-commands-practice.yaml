@@ -57,7 +57,7 @@ jobs:
           sed -e '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ]' -e '/'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ env.METADATA_NAME }}"'/ }' ${{ env.FILE_NAME }} > ${TEMP_FILE}
           sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' ${{ env.FILE_NAME }} > ${TEMP_FILE}
           echo "::set-output name=tempFileName::${TEMP_FILE}"
-          CAT ${TEMP_FILE}
+          cat ${TEMP_FILE}
         env:
           METADATA_NAME: ${{ github.events.inputs.applicationName }}
           CONTAINER_TAG: ${{ github.event.inputs.branchName }}
