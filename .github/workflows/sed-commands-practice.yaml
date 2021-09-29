@@ -50,6 +50,7 @@ jobs:
 
       # 3) Update webapp.yaml
       - name: Update webapp.yaml using sed
+        working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          sed 's/^\(\s*metadata.name\s*:\s*\).*/\${{ github.event.inputs.applicationName }}-${{ github.event.inputs.branchName }}/' ${{ needs.set-up.outputs.webappPath }}/webapp.yaml
-          sed 's/^\(\s*containerTag\s*:\s*\).*/\${{ github.event.inputs.branchName }}/' ${{ needs.set-up.outputs.webappPath }}/webapp.yaml
+          sed 's/^\(\s*metadata.name\s*:\s*\).*/\${{ github.event.inputs.applicationName }}-${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
+          sed 's/^\(\s*containerTag\s*:\s*\).*/\${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
