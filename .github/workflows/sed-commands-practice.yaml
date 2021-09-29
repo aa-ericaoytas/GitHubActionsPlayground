@@ -55,7 +55,7 @@ jobs:
           sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' ${{ env.FILE_NAME }} > ${{ env.FILE_NAME }}
           echo "::set-output name=tempFileName::${{ env.FILE_NAME }}"
         env:
-          METADATA_NAME: ${{ github.events.inputs.applicationName }}
+          METADATA_NAME: ${{ github.event.inputs.applicationName }}
           CONTAINER_TAG: ${{ github.event.inputs.branchName }}
           FILE_NAME: ${{ env.fileToUpdate }}
       
