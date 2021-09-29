@@ -49,15 +49,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update ${{ env.fileToUpdate }} using sed
-        id: updateFile
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          TEMP_FILE="temp.yaml"
-          touch ${TEMP_FILE}
-          sed -e '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ]' -e '/'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ env.METADATA_NAME }}"'/ }' ${{ env.FILE_NAME }} > ${TEMP_FILE}
-          sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' ${{ env.FILE_NAME }} > ${TEMP_FILE}
-          echo "::set-output name=tempFileName::${TEMP_FILE}"
-          cat ${TEMP_FILE}
+          sed -e '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ]' -e '/'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ env.METADATA_NAME }}"'/ }' ${{ env.FILE_NAME }} > ${{ env.FILE_NAME }}
+          sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' ${{ env.FILE_NAME }} > ${{ env.FILE_NAME }}
+          echo "::set-output name=tempFileName::${{ env.FILE_NAME }}"
         env:
           METADATA_NAME: ${{ github.events.inputs.applicationName }}
           CONTAINER_TAG: ${{ github.event.inputs.branchName }}
@@ -66,4 +62,4 @@ jobs:
       - name: Print changes to ${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          cat ${{ steps.updateFile.outputs.tempFileName }}
+          cat ${{ env.fileToUpdate }}
