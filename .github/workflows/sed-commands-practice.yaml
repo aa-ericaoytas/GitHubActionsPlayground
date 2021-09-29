@@ -54,3 +54,8 @@ jobs:
         run: |
           sed 's/^\(\s*metadata.name\s*:\s*\).*/\${{ github.event.inputs.applicationName }}-${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
           sed 's/^\(\s*containerTag\s*:\s*\).*/\${{ github.event.inputs.branchName }}/' ${{ env.fileToUpdate }}
+
+      - name: Print changes to ${{ env.fileToUpdate }}
+        working-directory: ${{ needs.set-up.outputs.webappPath }}
+        run: |
+          cat ${{ env.fileToUpdate }}
