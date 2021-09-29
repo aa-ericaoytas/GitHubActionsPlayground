@@ -51,8 +51,8 @@ jobs:
       - name: Update ${{ env.fileToUpdate }} using sed
         working-directory: ${{ needs.set-up.outputs.webappPath }}
         run: |
-          sed -e '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ]' -e '/'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ env.METADATA_NAME }}"'/ }' ${{ env.FILE_NAME }} > ${{ env.FILE_NAME }}
-          sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' ${{ env.FILE_NAME }} > ${{ env.FILE_NAME }}
+          sed -e '/^'"metadata"'/,/^[   ]*$/{  # [ spaceChar tabChar ]' -e '/'"name"'/s/\('"name: "'\)\(.*$\)/\1'"${{ env.METADATA_NAME }}"'/ }' < ${{ env.FILE_NAME }}
+          sed 's/^\(\s*containerTag\s*:\s*\).*/\1${{ env.CONTAINER_TAG }}/' < ${{ env.FILE_NAME }}
           echo "::set-output name=tempFileName::${{ env.FILE_NAME }}"
         env:
           METADATA_NAME: ${{ github.event.inputs.applicationName }}
