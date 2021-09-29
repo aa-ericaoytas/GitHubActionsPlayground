@@ -56,7 +56,7 @@ jobs:
         env:
           METADATA_NAME: ${{ github.events.input.applicationName }}
           CONTAINER_TAG: ${{ github.event.inputs.branchName }}
-          FILE_NAME: ${{ fileToUpdate }}
+          FILE_NAME: ${{ env.fileToUpdate }}
       
       - name: Print changes to ${{ env.fileToUpdate }}
         working-directory: ${{ needs.set-up.outputs.webappPath }}
