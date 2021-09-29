@@ -38,7 +38,7 @@ jobs:
           fi
           WEBAPP_PATH=$(echo "${APPNAME}" | tr _ -)/${{ github.event.inputs.targetEnvironment }}
           echo "::set-output name=webapp::${WEBAPP_PATH}"
-          echo "INFO: webappPath=${WEBAPP_PATH}
+          echo "INFO: webappPath=${WEBAPP_PATH}"
 
   update-webapp:
     name: Set up variables
