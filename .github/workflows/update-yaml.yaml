@@ -89,6 +89,7 @@ jobs:
         run: |
           git config user.name "${{ needs.set-up.outputs.actor }}"
           git config user.email "<>"
+          git pull
           git add .
           git commit -m "Update version to ${{ needs.set-up.outputs.applicationVersion }} in ${{ env.fileToUpdate }}"
           git push origin main
