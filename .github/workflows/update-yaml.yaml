@@ -21,7 +21,7 @@ on:
         description: "New version to update to"
         required: true
       targetEnvironment: 
-        description: [ sandbox, nonprod ]
+        description: "[ sandbox, nonprod ]"
         required: true
         default: nonprod
 
