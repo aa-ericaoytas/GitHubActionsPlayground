@@ -6,5 +6,5 @@ metadata:
     disableIngress: "true"
 spec:
   containerName: test/containerName
-  containerTag: "0.5.0"
+  containerTag: "0.5.1"
   port: 8080
