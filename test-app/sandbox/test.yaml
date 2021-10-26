@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: WebApp
+metadata:
+  name: GitHub
+  annotations:
+    disableIngress: "true"
+spec:
+  containerName: test/containerName
+  containerTag: "0.3.0"
+  port: 8080
