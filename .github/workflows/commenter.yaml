@@ -1,0 +1,36 @@
+name: comment on pull request
+
+on:
+  workflow_dispatch:
+    inputs:
+      searchItem:
+        description: "Item you are searching for"
+        required: false
+        default: Nothing
+      pullNumber:
+        description: "Pull request number"
+        required: true
+      sourceRepository:
+        description: "Repository that triggered this workflow"
+        required: true
+
+jobs:
+  comment:
+    name: Comment on pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: commenter
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          repository: ${{ github.event.inputs.sourceRepository }}
+          issue-number: ${{ github.event.inputs.pullNumber }}
+          token: ${{ secrets.WORKFLOW_PAT }}
+          body: |
+            This is a test.
+            - Status: Hungry
+            - URL: https://www.google.com/maps/search/google+${{ github.event.inputs.searchItem }}
+            Go get some.
+
+            ** Hi ** 
+            - Copy this code asdlkfjoljoitjaoijjaoisj: `sadfjhoijaoiesjoif This is code. Search item is ${{ github.event.inputs.searchItem }} adsfdsafefesafsadf`
+            - Yes
